@@ -55,8 +55,48 @@ def unpack(node):
             for line in unpack(element).splitlines():
                 s += f"\n  {line}"
         return s
+    elif type(node) == ast.Assign:
+        s = "Assignment: "
+        # handle possible target types
+        target_type = type(node.targets[0])
+        if target_type == ast.Name:
+            s += f"{node.targets[0].id} -> "
+        elif target_type == ast.Attribute:
+            s += f"self.{node.targets[0].attr} -> "
+        elif target_type == ast.Tuple:
+            targets = []
+            for target in node.targets[0].elts:
+                if type(target) == ast.Name:
+                    targets.append(target.id)
+                elif type(target) == ast.Attribute:
+                    targets.append(target.attr)
+                else:
+                    targets.append("<unimplemented>")
+            s += ", ".join(str(target) for target in targets)
+            s += " -> "
+        else:
+            s += "<unimplemented> -> "
+        # handle possible value types
+        value_type = type(node.value)
+        if value_type == ast.Name:
+            s += f"{node.value.id} (variable)"
+        elif value_type == ast.Constant:
+            s += f"{node.value.value} {type(node.value.value)}"
+        elif value_type == ast.Tuple:
+            values = []
+            for value in node.value.elts:
+                if type(value) == ast.Name:
+                    values.append(f"{value.id} (variable)")
+                elif type(value) == ast.Constant:
+                    values.append(f"{value.value} {type(value.value)}")
+                else:
+                    values.append("<unimplemented>")
+            s += ", ".join(str(value) for value in values)
+        else:
+            s += "<unimplemented>"
+        return s
     else:
-        return "n/a"
+        return "<unimplemented>"
 
 
 print(unpack(tree))
