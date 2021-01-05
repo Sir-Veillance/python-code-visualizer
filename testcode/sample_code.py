@@ -1,6 +1,7 @@
 global_string = "This is a global string"
 test_list = [1, 2, 3, 4, 5]
 global_int = 612
+formatted_string = f"Test {global_int * 2}"
 a, b = 100, 200
 
 # this is sample code for testing purposes with parsing and debugging implementation

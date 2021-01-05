@@ -46,6 +46,37 @@ def unpack(node):
         return "<unimplemented>"
 
 
+def choose_process(node, context):
+    """
+    choose_process takes some ast object and determines which process function needs to be called. This function is
+    present to simplify the structure of all the process functions since they will often need to call a variety of
+    other process functions within themselves. Every process function should have an entry within this handler function.
+
+    Parameters:
+        node (ast.AST): The type of this AST object will be used to determine which process function needs to be called
+        context (Boolean): Context is passed to process_attribute to choose whether context is returned in the string
+    Returns:
+        string (the output of the called process function)
+    """
+    node_type = type(node)
+    if node_type == ast.ClassDef:
+        return process_class_def(node)
+    elif node_type == ast.FunctionDef:
+        return process_function_def(node)
+    elif node_type == ast.Assign:
+        return process_assign(node)
+    elif node_type == ast.Constant:
+        return process_constant(node)
+    elif node_type == ast.Name:
+        return process_name(node)
+    elif node_type == ast.Attribute:
+        return process_attribute(node, context)
+    elif node_type == ast.JoinedStr:
+        return process_joined_string(node)
+    else:
+        return "<unimplemented>"
+
+
 def process_class_def(node):
     # TODO add information about decorators
     s = f"Class definition: {node.name}"
@@ -118,10 +149,34 @@ def process_assign(node):
     return s
 
 
-def process_constant(constant):
-    value = constant.value
+def process_constant(node):
+    value = node.value
     s = f"{str(value)} {type(value)}"
     return s
+
+
+def process_name(node):
+    return f"{node.id}"
+
+
+def process_attribute(node, context):
+    if context:
+        s = f"{node.attr} - "
+        context_type = type(node.ctx)
+        if context_type == ast.Load:
+            s += "action = loaded"
+        elif context_type == ast.Store:
+            s += "action = stored"
+        elif context_type == ast.Del:
+            s += "action = deleted"
+        else:
+            s += "<error>"
+    else:
+        return f"{node.attr}"
+
+
+def process_joined_string(node):
+    return node
 
 
 print(unpack(tree))
