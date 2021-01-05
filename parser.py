@@ -1,7 +1,7 @@
 import ast
 
 # filename = input("Enter filepath: ")
-filename = "sample_code.py"
+filename = "testcode/sample_code.py"
 
 try:
     with open(filename) as f:
