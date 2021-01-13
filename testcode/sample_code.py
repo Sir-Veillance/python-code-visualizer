@@ -42,6 +42,12 @@ class Item:
         return self.price
 
 
+if 1 < 0 or 2 < 5:
+    print("test")
+    a = 5
+    print("test2")
+
+
 if __name__ == "__main__":
     item_one = Item("Item One", 15.00)
     item_two = Item("Item Two", 8.00)
