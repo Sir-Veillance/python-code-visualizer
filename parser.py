@@ -1,7 +1,8 @@
 import ast
 
 # filename = input("Enter filepath: ")
-filename = "testcode/sample_code.py"
+# filename = "testcode/sample_code.py"
+filename = "parser.py"
 
 try:
     with open(filename) as f:
@@ -12,38 +13,6 @@ except FileNotFoundError:
     print("File not found with given filepath.")
     input("Press any key to exit...")
     quit()
-
-
-def unpack(node):
-    """
-    unpack takes an ast.Module object given from ast.parse() and returns a string giving a representation of
-    the structure.
-
-    Parameters:
-        node (ast.AST): The original call to unpack should pass an ast.Module object generated from ast.parse()
-                        unpack will then recursively call itself with each element from the original ast.Module
-
-    Returns:
-        string
-    """
-    # if/elseif structure for ast object cases
-    if type(node) == ast.Module:
-        s = f"Unpacked representation:"
-        for element in node.body:
-            for line in unpack(element).splitlines():
-                s += f"\n    {line}"
-        return s
-    elif type(node) == ast.ClassDef:
-        s = process_class_def(node)
-        return s
-    elif type(node) == ast.FunctionDef:
-        s = process_function_def(node)
-        return s
-    elif type(node) == ast.Assign:
-        s = process_assign(node)
-        return s
-    else:
-        return "<unimplemented>"
 
 
 def process(node):
@@ -149,8 +118,6 @@ def process_for(node):
 def process_if(node):
     # THIS IS RELATIVELY COMPLICATED, THERE ARE LOTS OF LOGIC POSSIBILITIES FOR AN IF STATEMENT AND THERE ARE
     # MULTIPLE NODES THAT CAN SHOW UP IN THE TEST ATTRIBUTE OF AN ast.If OBJECT
-    print(type(node.test))
-    print(process(node.test))
     s = f"If Statement: {process(node.test)}"
     for element in node.body:
         for line in process(element).splitlines():
@@ -175,7 +142,7 @@ def process_aug_assign(node):
 
 
 def process_expr(node):
-    s = process_call(node.value)
+    s = process(node.value)
     return s
 
 
